@@ -1,6 +1,6 @@
 ## #30DayChartChallenge
 
-For quite some time I have been wanting to do some analysis of my Goodreads data. So I decided to take the #30DayChartChallenge as an excuse...
+For quite some time I have been wanting to do some analysis of my Goodreads data. So I decided to take the [#30DayChartChallenge](https://twitter.com/hashtag/30DayChartChallenge) as an excuse...
 Let's see how far I get!
 
 Click on each chart to see the code.
