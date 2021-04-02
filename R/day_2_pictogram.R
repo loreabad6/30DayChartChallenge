@@ -35,8 +35,7 @@ theme_update(
 )
 
 # Plot
-ggplot(read_books, aes(y = ..count.., x = groups_years)) +
-  # geom_dotplot(binwidth = 1) +
-  geom_text(label = "A") +
-  theme_bw()
+ggplot(read_years_count, aes(values = n, fill = groups_years)) +
+  geom_waffle() +
+  facet_wrap(~groups_years)
   
