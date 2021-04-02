@@ -7,3 +7,6 @@ Click on each chart to see the code.
 
 ### Day 1: part-to-whole - Week 1: Comparisons
 [![](charts/day_1.png)](R/day_1_part-to-whole.R)
+
+### Day 2: pictogram - Week 1: Comparisons
+[![](charts/day_2.png)](R/day_2_pictogram.R)
