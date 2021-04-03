@@ -12,4 +12,4 @@ Click on each chart to see the code.
 [![](charts/day_2.png)](R/day_2_pictogram.R)
 
 ### Day 3: historical - Week 1: Comparisons
-[![](charts/day_3.png)](R/day_3_pictogram.R)
+[![](charts/day_3.png)](R/day_3_historical.R)
