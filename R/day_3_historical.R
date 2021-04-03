@@ -3,6 +3,7 @@
 library(tidyverse)
 library(here)
 library(ggforce)
+library(ggfx)
 
 # Data: scrapped from Gooodreads
 # Code from: https://maraaverick.rbind.io/2017/10/goodreads-part-2/
@@ -21,33 +22,57 @@ historical_books = goodreads %>%
   ) %>%
   mutate(
     years_probably = ifelse(
-      str_detect(author, "Hemingway"), "1918",
+      str_detect(author, "Hemingway"), "1917",
       ifelse(
         str_detect(author, "Boyne"), "1941",
         years_probably)),
     title = str_trim(str_extract(title,"[^(]+")),
-    years = as.Date(paste0(years_probably, "/01/01")),
+    event = case_when(
+      years_probably %in% c(1939:1941) ~ "WWII",
+      str_detect(author, "Hemingway") ~ "WWI",
+      years_probably %in% c(1918) ~ "Spanish Flu",
+      
+    ),
   ) %>% 
-  filter(years_probably > 1700 & years_probably < 2000) %>% 
-  arrange(years) 
+  filter(years_probably > 1000 & years_probably < 2000) %>% 
+  arrange(years_probably) 
 
 
 # Plot
 extrafont::loadfonts("win")
-plot_family = "Papyrus"
+plot_family = "Tempus Sans ITC"
 theme_set(theme_void(base_family = plot_family))
 theme_update(
   plot.background = element_rect(fill = "steelblue", color = "transparent"),
   panel.background = element_rect(fill = "steelblue", color = "transparent"),
-  legend.position = "none"
+  legend.position = "none",
+  plot.margin = margin(4,4,4,4),
+  plot.caption = element_text(hjust = 0),
+  plot.title = element_text(hjust = 0.5, size = 20, face = "bold")
 )
 
-zoom_dates = as.Date(paste0(c(1900, 2020),  "/01/01"))
 ggplot(historical_books) +
   aes(x = years_probably, label = years_probably) +
   geom_hline(yintercept = 0, color = "black", size = 2) + 
-  geom_point(y = 0, shape = 20, size = 25, color = "darkorange") + 
-  geom_text(y = 0, size = 3) + 
-  # geom_text(aes(y = 0.5, label = title), angle = 90) +
-  scale_y_continuous(limits = c(-2, 2)) #+
-  facet_zoom(x = years > zoom_dates[1])
+  geom_mark_circle(aes(label = paste0(title, "\n", author), y = 0),
+                 label.family = plot_family, label.fill = "transparent", label.fontsize = 8) +
+  with_blur(
+    geom_point(y = 0, shape = 20, size = 25, color = "darkorange"), sigma = 2
+  ) +
+  geom_text(y = 0.015, size = 4, family = plot_family, fontface = "bold") + 
+  scale_y_continuous(limits = c(-1, 1)) +
+  labs(
+    title = "When were the historical fiction books I read set?",
+    caption = paste0(
+      "Data: My webscrapped Goodreads data - ", 
+      "Visualization: @loreabad6\n", 
+      "Challenge: #30DayChartChallenge - ",
+      "Day 3: historical - Week 1: comparisons"
+    )
+  )
+
+ggsave(
+  filename = "charts/day_3.png",
+  width = 35, height = 10, device = "png",
+  units = "cm", dpi = 300
+)
