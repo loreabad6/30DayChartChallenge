@@ -13,3 +13,6 @@ Click on each chart to see the code.
 
 ### Day 3: historical - Week 1: Comparisons
 [![](charts/day_3.png)](R/day_3_historical.R)
+
+### Day 4: magical - Week 1: Comparisons
+[![](charts/day_4.gif)](R/day_4_magical.R)
