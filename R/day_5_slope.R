@@ -13,27 +13,42 @@ export = goodreads_export %>%
 genres = goodreads %>% 
   mutate(title = str_squish(title)) %>% 
   rowwise() %>% 
-  mutate(first_genre = book_genres[1]) %>%
+  mutate(
+    first_genre = book_genres[1],
+    second_genre = book_genres[2]
+  ) %>%
   left_join(export, by = c("title" = "Title")) %>% 
   mutate(date_read = case_when(
     is.na(`Date Read`) ~ `Date Added`,
     TRUE ~ `Date Read`
   )) %>% 
-  select(title, Author, first_genre, date_read) %>% 
-  mutate(periods = factor(case_when(
+  select(title, Author, first_genre, second_genre, date_read) %>% 
+  mutate(periods = as.factor(case_when(
     format(date_read, "%Y") <= 2010 ~ "2000-2010",
-    format(date_read, "%Y") <= 2017 ~ "2011-2017",
     format(date_read, "%Y") <= 2021 ~ "2011-2021"
-    ), ordered = T)
-  )
+    ))
+  ) %>% 
+  pivot_longer(c(first_genre, second_genre), values_to = "genre") %>% 
+  mutate(periods = factor(periods, levels = c("2000-2010", "2011-2021")))
 
 genres_sum = genres %>% 
-  count(first_genre, periods) %>% 
+  count(genre, periods) %>% 
   drop_na() %>% 
-  filter(n > 1) %>% 
+  filter(n > 3) %>% 
   group_by(periods) %>% 
-  arrange(n) %>% 
-  mutate(rank = row_number())
+  arrange(desc(n)) %>% 
+  mutate(
+    rank = row_number(),
+    nudge_x = case_when(
+      periods == "2000-2010" ~ -0.05,
+      periods == "2011-2021" ~ 0.05
+    ),
+    hjust = case_when(
+      periods == "2000-2010" ~ 1,
+      periods == "2011-2021" ~ 0
+    )
+  ) %>% 
+  filter(rank < 12)
 
 
 # Plot
@@ -61,9 +76,11 @@ theme_update(
 )
 
 ggplot(genres_sum) + 
-  aes(x = periods, y = rank, group = first_genre) +
+  aes(x = periods, y = rank, group = genre) +
   geom_line() +
   geom_point() +
   geom_text(
-    aes(label = first_genre), nudge_x = 0.25
-  )
+    aes(label = genre, hjust = hjust),
+    nudge_x = genres_sum$nudge_x
+  ) +
+  scale_y_reverse()
