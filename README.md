@@ -16,3 +16,6 @@ Click on each chart to see the code.
 
 ### Day 4: magical - Week 1: Comparisons
 [![](charts/day_4.gif)](R/day_4_magical.R)
+
+### Day 5: slope - Week 1: Comparisons
+[![](charts/day_5.png)](R/day_5_slope.R)

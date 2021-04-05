@@ -36,7 +36,6 @@ genres = goodreads %>%
 genres_sum = genres %>% 
   count(genre, periods) %>% 
   drop_na() %>% 
-  # filter(n > 3) %>% 
   group_by(periods) %>% 
   arrange(desc(n)) %>% 
   mutate(
@@ -66,20 +65,19 @@ theme_update(
   plot.background = element_rect(fill = color_bg, color = "transparent"),
   panel.background = element_rect(fill = color_bg, color = "transparent"),
   legend.position = "none",
-  plot.margin = margin(rep(6, 4)),
+  plot.margin = margin(rep(4, 4)),
   plot.caption = element_text(
     hjust = 0.5, color = color_panel,
-    family = plot_family
+    family = plot_family, size = 18
   ),
   plot.title = element_text(
-    # halign = 0.5,
-    hjust = 0.5, size = 18,
+    hjust = 0.5, size = 32,
     family = plot_family,
     face = "bold", color = color_font
   ),
   plot.subtitle = element_textbox_simple(
     halign = 0.5,
-    hjust = 0.5, size = 16,
+    hjust = 0.5, size = 28,
     family = plot_family,
     face = "bold", color = color_font
   )
@@ -96,7 +94,7 @@ ggplot(genres_sum) +
   geom_text(
     aes(label = genre, hjust = hjust),
     nudge_x = genres_sum$nudge_x,
-    family = plot_family
+    family = plot_family, size = 8
   ) +
   scale_color_scico(
     direction = -1, palette = "grayC",
@@ -109,8 +107,14 @@ ggplot(genres_sum) +
     subtitle = "from my <span style = 'color:purple;font-family:Handwritten'>teenage years</span>  to my <span style = 'color:darkgreen;font-family:Handwritten'>adult years</span>",
     caption = paste0(
       "Data: My webscrapped Goodreads data - ", 
-      "Visualization: @loreabad6\n", 
+      "Visualization: @loreabad6 | ", 
       "Challenge: #30DayChartChallenge - ",
       "Day 5: slope - Week 1: comparisons"
     )
   ) 
+
+ggsave(
+  filename = "charts/day_5.png",
+  width = 12, height = 10, device = "png",
+  units = "cm", dpi = 320
+)
