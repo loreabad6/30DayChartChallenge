@@ -34,7 +34,7 @@ genres = goodreads %>%
 genres_sum = genres %>% 
   count(genre, periods) %>% 
   drop_na() %>% 
-  filter(n > 3) %>% 
+  # filter(n > 3) %>% 
   group_by(periods) %>% 
   arrange(desc(n)) %>% 
   mutate(
@@ -48,14 +48,14 @@ genres_sum = genres %>%
       periods == "2011-2021" ~ 0
     )
   ) %>% 
-  filter(rank < 12)
+  filter(rank <= 12)
 
 
 # Plot
 sysfonts::font_add("FuturaLT", "C:/Users/Lore/AppData/Local/Microsoft/Windows/Fonts/FuturaLT.ttf")
 showtext::showtext_auto()
-font_panel = "FuturaLT"
-color_bg = "#e1d9c4"
+plot_family = "FuturaLT"
+color_bg = "#EEE9BF"
 color_font = "#5b1012"
 color_panel = "#6c523d"
 theme_set(theme_void(base_family = plot_family))
@@ -76,11 +76,17 @@ theme_update(
 )
 
 ggplot(genres_sum) + 
-  aes(x = periods, y = rank, group = genre) +
-  geom_line() +
-  geom_point() +
+  aes(x = periods, y = rank, group = genre, color = rank) +
+  geom_line(color = "grey60", show.legend = F) +
+  geom_point(
+    aes(fill = periods),
+    shape = 21, color = "black", stroke = 1, size = 3,
+    show.legend = F
+  ) +
   geom_text(
     aes(label = genre, hjust = hjust),
-    nudge_x = genres_sum$nudge_x
+    nudge_x = genres_sum$nudge_x,
+    show.legend = F
   ) +
+  scale_fill_manual(values = c("purple", "lightgreen")) +
   scale_y_reverse()
