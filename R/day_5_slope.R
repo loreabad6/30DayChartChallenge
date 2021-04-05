@@ -1,5 +1,7 @@
 # Libraries
 library(tidyverse)
+library(ggtext)
+library(scico)
 library(here)
 
 # Data
@@ -53,11 +55,12 @@ genres_sum = genres %>%
 
 # Plot
 sysfonts::font_add("FuturaLT", "C:/Users/Lore/AppData/Local/Microsoft/Windows/Fonts/FuturaLT.ttf")
+sysfonts::font_add("Handwritten", "C:/Users/Lore/AppData/Local/Microsoft/Windows/Fonts/NothingYouCouldDo-Regular.ttf")
 showtext::showtext_auto()
 plot_family = "FuturaLT"
-color_bg = "#EEE9BF"
-color_font = "#5b1012"
-color_panel = "#6c523d"
+color_bg = "grey80"
+color_font = "grey20"
+color_panel = "grey50"
 theme_set(theme_void(base_family = plot_family))
 theme_update(
   plot.background = element_rect(fill = color_bg, color = "transparent"),
@@ -65,28 +68,49 @@ theme_update(
   legend.position = "none",
   plot.margin = margin(rep(6, 4)),
   plot.caption = element_text(
-    hjust = 0, color = color_panel,
-    family = font_panel
+    hjust = 0.5, color = color_panel,
+    family = plot_family
   ),
-  plot.title = element_textbox_simple(
-    hjust = 0, size = 20,
+  plot.title = element_text(
+    # halign = 0.5,
+    hjust = 0.5, size = 18,
+    family = plot_family,
+    face = "bold", color = color_font
+  ),
+  plot.subtitle = element_textbox_simple(
+    halign = 0.5,
+    hjust = 0.5, size = 16,
     family = plot_family,
     face = "bold", color = color_font
   )
+  
 )
 
 ggplot(genres_sum) + 
   aes(x = periods, y = rank, group = genre, color = rank) +
-  geom_line(color = "grey60", show.legend = F) +
+  geom_line(color = "grey30") +
   geom_point(
     aes(fill = periods),
-    shape = 21, color = "black", stroke = 1, size = 3,
-    show.legend = F
+    shape = 21, color = "black", stroke = 1, size = 3
   ) +
   geom_text(
     aes(label = genre, hjust = hjust),
     nudge_x = genres_sum$nudge_x,
-    show.legend = F
+    family = plot_family
   ) +
-  scale_fill_manual(values = c("purple", "lightgreen")) +
-  scale_y_reverse()
+  scale_color_scico(
+    direction = -1, palette = "grayC",
+    begin = 0.5, end = 0.8,
+  ) +
+  scale_fill_manual(values = c("purple", "darkgreen")) +
+  scale_y_reverse() +
+  labs(
+    title = "My top 12 book genres evolution",
+    subtitle = "from my <span style = 'color:purple;font-family:Handwritten'>teenage years</span>  to my <span style = 'color:darkgreen;font-family:Handwritten'>adult years</span>",
+    caption = paste0(
+      "Data: My webscrapped Goodreads data - ", 
+      "Visualization: @loreabad6\n", 
+      "Challenge: #30DayChartChallenge - ",
+      "Day 5: slope - Week 1: comparisons"
+    )
+  ) 
