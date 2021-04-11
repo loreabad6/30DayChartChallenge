@@ -4,6 +4,8 @@ library(here)
 library(sf)
 library(osmdata)
 library(ggimage)
+library(ggtext)
+library(ggfx)
 
 # Data
 # GBIF.org (11 April 2021) GBIF Occurrence Download https://doi.org/10.15468/dl.zdnb2d
@@ -13,7 +15,8 @@ sbgcity = getbb("Salzburg, AT", featuretype = "city", format_out = "sf_polygon")
 flachgau = getbb("Flachgau, AT", format_out = "sf_polygon")
 tennengau = getbb("Tennengau, AT", format_out = "sf_polygon")
 
-region = rbind(sbgcity, flachgau, tennengau)
+region = rbind(sbgcity, flachgau, tennengau) %>% 
+  mutate(region = c("Salzburg", "Salzburg-Umgebung", "Tennengau"))
 sal_img = "https://citizen-conservation.org/wp-content/uploads/2019/05/4_1_2_cc_arten_art_illustration.png"
 
 # Wrangle
@@ -23,63 +26,77 @@ salamander_sf = salamander %>%
 img_sf = tibble(img = sal_img, lat = 47.55, lon = 13.4) 
 
 # Plot
-sysfonts::font_add("FuturaLT", "C:/Users/Lore/AppData/Local/Microsoft/Windows/Fonts/FuturaLT.ttf")
-sysfonts::font_add("Handwritten", "C:/Users/Lore/AppData/Local/Microsoft/Windows/Fonts/NothingYouCouldDo-Regular.ttf")
-showtext::showtext_auto()
 plot_family = "sans"
-color_bg = "grey80"
-color_font = "grey50"
+color_bg = "#fcf3bd"
+color_font = "black"
 color_panel = "grey50"
 theme_set(theme_void(base_family = plot_family))
 theme_update(
   plot.background = element_rect(fill = color_bg, color = "transparent"),
   panel.background = element_rect(fill = color_bg, color = "transparent"),
   legend.position = "none",
-  plot.margin = margin(rep(4, 4)),
+  plot.margin = margin(rep(0, 4)),
   plot.caption = element_text(
     hjust = 0.5, color = color_panel,
-    family = plot_family, size = 12
-  ),
-  plot.title = element_text(
-    hjust = 0.5, size = 32,
-    family = plot_family,
-    face = "bold", color = color_font
-  ),
-  plot.subtitle = element_text(
-    hjust = 0.5, size = 28,
-    family = plot_family,
-    face = "bold", color = color_font
+    family = plot_family, size = 4, 
+    margin = margin(t = -15) 
   )
-  
 )
 
 ggplot(salamander_sf) +
-  geom_sf(data = sbg, fill = NA, color = "grey20") +
-  geom_sf(data = region, fill = "black", color = NA) +
+  with_outer_glow(
+    geom_sf(data = sbgland, fill = NA, color = "black", size = 0.5)
+  ) +
+  geom_sf(data = region, fill = "black", color = "black") +
   stat_density_2d(
     mapping = ggplot2::aes(x = purrr::map_dbl(geometry, ~.[1]),
                                          y = purrr::map_dbl(geometry, ~.[2]),
                                          fill = stat(density)),
     geom = 'raster',
-    contour = FALSE
-    # alpha = 0.5
+    contour = FALSE, n = 300, adjust = 0.8
+  ) +
+  annotate(
+    geom = "text",
+    y = 47.493,
+    x = 12.921,
+    label = "Germany\nAustria",
+    size = 1.2,
+    color = "grey70",
+    angle = 330, 
+    alpha = 0.7
   ) +
   scale_fill_gradientn(
-    colors = c("transparent","#f7d926", "#ad7a0d")
-    # low = "transparent", mid = "#f6ce1e", high = "#ad7a0d"
-    # values = c(NA, "#fffdeb", "#fef8c1", "#fcf396", "#f9ee68", "#f6e82a")
-    # breaks = c(0, 25, 45, 65, 85, 100)
+    colors = c("transparent", "#f7d926", "#ad7a0d")
   ) +
   geom_image(data = img_sf, aes(image = img, x = lon, y = lat), size = 0.5) +
-  coord_sf(xlim = c(12.80, 13.56), ylim = c(47.45, 48.05)) +
+  annotate(
+    geom = "richtext",
+    x = 13.45, y = 47.9, size = 2.7,
+    label = "Fire salamander<br><span style='color:grey50'>*Salamandra salamandra*</span>",
+    fill = NA, label.color = NA, # remove background and outline
+    label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  ) +
+  annotate(
+    geom = "richtext",
+    x = 13.35, y = 47.63, size = 2.1, color = "#f7d926",
+    label = "Observations from 2019 in<br>**Salzburg**, **Salzburg-Umgebung**<br>and **Tennengau**, Austria",
+    fill = NA, label.color = NA, # remove background and outline
+    label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  ) +
+  annotate(
+    geom = "richtext",
+    x = 12.95, y = 47.65, size = 1.5,
+    label = "The fire salmander has<br>a vulnerable status according to<br>the IUCN Red List in Salzburg.<br>Deforestation is its main threat.",
+    fill = NA, label.color = NA, # remove background and outline
+    label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  ) +
+  coord_sf(xlim = c(12.80, 13.56), ylim = c(47.45, 47.98)) +
   labs(
-    # title = "My top 12 book genres evolution",
-    # subtitle = "from my <span style = 'color:purple;font-family:Handwritten'>teenage years</span>  to my <span style = 'color:darkgreen;font-family:Handwritten'>adult years</span>",
     caption = paste0(
-      "Data: GBIF Occurrence | OpenStreetMap | Salamander image: citizen-conservation.org - ", 
-      "\nVisualization: @loreabad6 - ", 
+      "Data: GBIF Occurrence & OpenStreetMap | Salamander image: citizen-conservation.org | Text: Ankel (2020), Haus der Natur", 
+      "\nVisualization: @loreabad6 | ", 
       "Challenge: #30DayChartChallenge | ",
-      "Day 8: animals | Week 1: distribution"
+      "Day 8: animals | Week 2: distributions"
     )
   ) 
 

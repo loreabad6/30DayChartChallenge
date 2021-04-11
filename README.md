@@ -19,3 +19,6 @@ Click on each chart to see the code.
 
 ### Day 5: slope - Week 1: Comparisons
 [![](charts/day_5.png)](R/day_5_slope.R)
+
+### Day 8: animals - Week 2: Distributions
+[![](charts/day_8.png)](R/day_8_animals.R)
