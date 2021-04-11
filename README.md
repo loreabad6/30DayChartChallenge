@@ -1,7 +1,8 @@
 ## #30DayChartChallenge
 
-For quite some time I have been wanting to do some analysis of my Goodreads data. So I decided to take the [#30DayChartChallenge](https://twitter.com/hashtag/30DayChartChallenge) as an excuse...
-Let's see how far I get!
+My contributions to the [#30DayChartChallenge](https://twitter.com/hashtag/30DayChartChallenge). 
+Here are the prompts for reference:
+![](https://github.com/Z3tt/30DayChartChallenge_Collection2021/raw/main/img/topics_ol_blank.png)
 
 Click on each chart to see the code.
 
