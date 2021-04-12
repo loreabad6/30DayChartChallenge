@@ -105,3 +105,5 @@ ggsave(
   width = 12, height = 10, device = "png",
   units = "cm", dpi = 320
 )
+
+knitr::plot_crop("charts/day_8.png")
