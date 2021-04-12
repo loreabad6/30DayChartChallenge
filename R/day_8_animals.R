@@ -72,21 +72,21 @@ ggplot(salamander_sf) +
   annotate(
     geom = "richtext",
     x = 13.45, y = 47.9, size = 2.7,
-    label = "Distribution of the<br>fire salamander<br><span style='color:grey50'>*Salamandra salamandra*</span>",
+    label = "Observations of the<br>fire salamander<br><span style='color:grey50'>*Salamandra salamandra*</span>",
     fill = NA, label.color = NA, # remove background and outline
     label.padding = grid::unit(rep(0, 4), "pt") # remove padding
   ) +
   annotate(
     geom = "richtext",
-    x = 13.3, y = 47.63, size = 2.1, color = "#f7d926",
-    label = "Hotspot map of observations from 2019 in<br>**Salzburg**, **Salzburg-Umgebung**<br>and **Tennengau**, Austria",
+    x = 13.3, y = 47.63, size = 2, color = "#f7d926",
+    label = "Hotspot map of observations from 2019<br>collected from observation.org around<br>**Salzburg**, Austria",
     fill = NA, label.color = NA, # remove background and outline
     label.padding = grid::unit(rep(0, 4), "pt") # remove padding
   ) +
   annotate(
     geom = "richtext",
     x = 12.95, y = 47.65, size = 1.5,
-    label = "The fire salmander has<br>a vulnerable status according to<br>the IUCN Red List in Salzburg.<br>Deforestation is its main threat.",
+    label = '*"The fire salmander has*<br>*a vulnerable status according to*<br>*the IUCN Red List in Salzburg.*<br>*Deforestation is its main threat.*"',
     fill = NA, label.color = NA, # remove background and outline
     label.padding = grid::unit(rep(0, 4), "pt") # remove padding
   ) +
